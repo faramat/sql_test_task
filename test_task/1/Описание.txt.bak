@@ -1,0 +1,60 @@
+Задание 1
+Опишите модель данных, которая может лежать в основе данного приложения.
+Ожидаемый результат: ER диаграмма с пояснениями о выборе сущностей и типов
+ данных их атрибутов. Используйте реляционную СУБД.
+---
+Для выполнения задания исходя из предложенной формы,были выбраны несколько сущностей
+на базе СУБД MySql(Workbench 8.0.28):
+1. person - человек
+		pk+
+		first_name (Тип данных TEXT(ограничение 20 символов для экономии
+		места на носителе сервера)
+		...
+		phone NN+
+		additional_phone NN-
+2. passport_person - паспорт человека
+		*ограничения на ввод символов и цифр документа аналогичны
+3. work_person - работа человека
+		salary DECIMAL 10,2 тип данных исходя из формы поля "Зарплата" с округлением
+		до 2х знаков после запятой
+4. application_parameters - параметры заявки
+		pk+
+		от себя:
+		+additional_services TINYINT(1) "Boolean" - наличие доп. услуг
+		+application_date DATE - дата отправки заявки
+5. additional_services - дополнительные услуги
+---
+Логика связей сущностей:
+I. У 1 человека может быть только 1 активный паспорт и несколько видов профессий.
+Связь person 1к1 passport_person
+Связь passport_person 1-ко-многим work_person
+II. У человека может быть несколько заявок в разное время (отсюда добавлено п.4 
+application_date).
+Связь person 1-ко-многим application_parameters
+III. У заявки может быть несколько доп.услуг. с разными ценами.
+Связь application_parameters 1-ко-многим additional_services
+Внешний ключ для паспорта является человек,а не заяка.Для того чтобы в случае смены паспорта,
+можно было отслеживать его актуальность,а данные паспортов не имею PK и будут обновляться во
+время истечения времени паспорта или удаляться из таблицы.
+---
+Кодировка utf8mb4_unicode_ci
+
+
+INSERT INTO person(first_name,last_name,father_name,phone,email,application_parameters_application_id,passport_person_passport_person_id) values (
+"Иван","Иванов","Иванович","9393699334","ivanov@mail.ru",1,1
+ );
+
+INSERT INTO passport_person(serial,nubmer,issue_date,department_code,issued_by,date_of_birthday,place_of_birth,place_of_registration,
+person_person_id,person_application_parameters_application_id,person_passport_person_passport_person_id) values (
+ 1234,123456,STR_TO_DATE("10-03-1999","%d-%m-%Y"),654345,"Кем то выдан",STR_TO_DATE("15-11-1988","%d-%m-%Y"),"Moscow","Moscow",1,1,1
+ );
+
+ INSERT INTO work_person(region_of_work,name_organization,inn,position,salary,work_start_date) values (
+ "Moscow","CinemaRoom","123456789012","Worker",35000.00,'2005-04-03'
+ );
+ INSERT INTO application_parameters(product_type,loan_purpose,sum,lending_rate,additional_services,credit_term,sum_total,application_date) values (
+ "Кредит наличными","Покупка товаров/услуг",100000.00,7.70,1,12,140000.00,'2022-03-26'
+ );
+ INSERT INTO additional_services(service_name,sum) values (
+ "Страхование жизни",25000.00
+ );
