@@ -1,0 +1,37 @@
+Задание 2
+Напишите SQL-запрос, который бы возвращал самый популярный вид продукта за текущий год.
+Ожидаемый результат: SQL-запрос, который основывается на модели данных из задания 1, и название СУБД, для которой был написан SQL-запрос.
+---
+Заполнение таблиц.
+ INSERT INTO person(first_name,last_name,father_name,phone,email,application_parameters_application_id,passport_person_passport_person_id) values (
+"Иван","Иванов","Иванович","9393699334","ivanov@mail.ru",1,1
+ );
+
+ INSERT INTO passport_person(serial,nubmer,issue_date,department_code,issued_by,date_of_birthday,place_of_birth,place_of_registration,
+person_person_id,person_application_parameters_application_id,person_passport_person_passport_person_id) values (
+ 1234,123456,STR_TO_DATE("10-03-1999","%d-%m-%Y"),654345,"Кем то выдан",STR_TO_DATE("15-11-1988","%d-%m-%Y"),"Moscow","Moscow",1,1,1
+ );
+
+ INSERT INTO work_person(region_of_work,name_organization,inn,position,salary,work_start_date,passport_person_person_person_id,
+ passport_person_person_application_parameters_application_id,passport_person_person_passport_person_passport_person_id) values (
+ "Moscow","CinemaRoom","123456789012","Worker",35000.00,STR_TO_DATE("12-04-2010","%d-%m-%Y"),1,1,1
+ );
+ 
+ INSERT INTO application_parameters(product_type,loan_purpose,sum,lending_rate,additional_services,credit_term,sum_total,application_date,person_person_id,
+ person_application_parameters_application_id,person_passport_person_passport_person_id) values (
+ "Кредит наличными","Покупка товаров/услуг",100000.00,7.70,1,12,140000.00,STR_TO_DATE("26-03-2022","%d-%m-%Y"),1,1,1
+ );
+ 
+  INSERT INTO additional_services(service_name,sum,application_parameters_application_id) values (
+ "Страхование жизни",25000.00,1
+ );
+--- 
+Решение:
+MySQL запрос к таблице заявок application_parameters (определение популярного вида продукта 
+за текующий год):
+
+SELECT product_type, COUNT(product_type) FROM application_parameters 
+WHERE YEAR(application_date) = YEAR(CURDATE()) GROUP BY product_type 
+ORDER BY COUNT(product_type) DESC LIMIT 1;
+
+*База данных экспортирована в эту папку, название файла "test_task.sql"
